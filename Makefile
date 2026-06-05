@@ -10,6 +10,7 @@ PLATFORM_ROOT=/srv
 PLATFORM_RUNTIME_ROOT=${PLATFORM_ROOT}
 
 args = $(filter-out $@,$(MAKECMDGOALS))
+PHP_SERVICE=app
 
 ## Help
 help:
@@ -36,3 +37,7 @@ help:
 ## Start project
 up:
 	docker compose up -d
+
+## login to php container
+php-shell:
+	docker compose exec -it -e XDEBUG_MODE=off ${PHP_SERVICE} bash

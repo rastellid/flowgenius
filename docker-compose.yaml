@@ -8,6 +8,9 @@ services:
       dockerfile: docker/Dockerfile
     ports:
       - "8080:80"
+    volumes:
+      # Bind mount: project files are shared between host and container
+      - .:/var/www/flowgenius
     env_file:
       - .env
     environment:

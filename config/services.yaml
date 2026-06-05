@@ -18,6 +18,13 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+            - '../src/Assessment/Domain/'
+
+    App\Shared\UI\REST\Controller\:
+        resource: '../src/Shared/UI/REST/Controller/'
+        tags: [ 'controller.service_arguments' ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

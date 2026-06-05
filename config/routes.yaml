@@ -1,11 +1,13 @@
-# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
+assessment_controllers:
+    type: attribute
+    prefix: /v1/assessment/
+    resource:
+        path: ../src/Assessment/UI/REST/Controller/
+        namespace: App\Assessment\UI\REST\Controller
 
-# This file is the entry point to configure the routes of your app.
-# Methods with the #[Route] attribute are automatically imported.
-# See also https://symfony.com/doc/current/routing.html
-
-# To list all registered routes, run the following command:
-#   bin/console debug:router
-
-controllers:
-    resource: routing.controllers
+shared_controllers:
+    type: attribute
+    prefix: /v1/
+    resource:
+        path: ../src/Shared/UI/REST/Controller/
+        namespace: App\Shared\UI\REST\Controller
