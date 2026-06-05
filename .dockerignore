@@ -1,0 +1,5 @@
+# Common project artifacts not needed inside the image
+.git/
+.idea/
+var/
+vendor/
