@@ -13,8 +13,6 @@ export default function Header() {
   const [open, setOpen] = useState<OpenMenu>(null)
   const rootRef = useRef<HTMLDivElement>(null)
 
-
-
   const toggle = (menu: Exclude<OpenMenu, null>) => (e: React.MouseEvent) => {
     e.stopPropagation()
     setOpen((cur) => (cur === menu ? null : menu))
@@ -36,16 +34,6 @@ export default function Header() {
             className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground lg:hidden"
           >
             <Icon name="menu" className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            className="relative hidden h-9 w-72 items-center rounded-lg border border-input bg-muted/40 ps-9 pe-4 text-start text-sm text-muted-foreground/50 transition-colors hover:bg-muted/60 sm:flex"
-          >
-            <Icon name="search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-            Search...
-            <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded border border-border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">
-              ⌘K
-            </kbd>
           </button>
         </div>
 
