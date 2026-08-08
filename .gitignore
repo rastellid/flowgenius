@@ -7,4 +7,6 @@
 /public/bundles/
 /var/
 /vendor/
+/example-templates/
+/apex-dashboard
 ###< symfony/framework-bundle ###

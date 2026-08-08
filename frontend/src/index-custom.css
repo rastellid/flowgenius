@@ -1,0 +1,39 @@
+/* ------------------------------------------------------------------ */
+/*  index-custom.css — personalizzazioni.                        */
+/*                                                                      */
+/*  Importa l'intero design system base (index.css) e sovrascrive solo  */
+/*  le variabili che vuoi cambiare. NON modificare index.css: tienilo   */
+/*  come base "pulita"; tutte le modifiche di colore/tema vanno qui.    */
+/*                                                                      */
+/*  Come funziona: le utility Tailwind (bg-primary, text-foreground…)   */
+/*  puntano alle variabili via var(--…). Ridefinendo la variabile qui,  */
+/*  che viene DOPO index.css, la tua versione vince e si applica a       */
+/*  tutta la UI (chiaro, scuro e grafici) senza toccare i componenti.   */
+/*                                                                      */
+/*  Formato colore: oklch(L C H) → L=luminosità 0–1, C=saturazione,     */
+/*  H=tinta 0–360 (160=teal, 255=blu, 300=viola, 15=rosso, 145=verde).  */
+/*  Per cambiare solo il colore, sposta H tenendo L e C.                */
+/* ------------------------------------------------------------------ */
+
+/* @import DEVE stare prima di ogni altra regola. */
+@import "./index.css";
+
+/* --- Override tema chiaro ---------------------------------------- */
+:root {
+  /* Esempio: colore principale in blu. Togli i commenti per attivarlo.
+     Ricordati di ripeterlo in .dark qui sotto. */
+  --primary: oklch(0.55 0.175 255);
+  --sidebar-primary: oklch(0.55 0.175 255);
+
+  /* --ring: oklch(0.55 0.175 255); */
+  /* --sidebar-primary: oklch(0.60 0.175 255); */
+  /* --chart-1: oklch(0.55 0.175 255); */
+}
+
+/* --- Override tema scuro ----------------------------------------- */
+.dark {
+  /* --primary: oklch(0.65 0.19 255); */
+  /* --ring: oklch(0.65 0.19 255); */
+  /* --sidebar-primary: oklch(0.65 0.19 255); */
+  /* --chart-1: oklch(0.65 0.19 255); */
+}

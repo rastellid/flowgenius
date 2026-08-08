@@ -1,12 +1,44 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <title>FlowGenius</title>
+    <meta name="description" content="FlowGenius — assessment e dashboard." />
+    <!-- Favicon inline (data: URI): nessun file, nessuna richiesta di rete. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2316a34a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E" />
+
+    <!-- Applica tema + stato sidebar PRIMA del primo paint, così non c'è flash
+         del tema sbagliato mentre React monta. Le stesse chiavi localStorage
+         sono lette/scritte a runtime da src/lib/theme.ts. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("apex-theme") || "system";
+          var dark =
+            t === "dark" ||
+            (t === "system" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          var el = document.documentElement;
+          el.classList.toggle("dark", dark);
+          el.style.colorScheme = dark ? "dark" : "light";
+          if (localStorage.getItem("apex-sidebar-collapsed") === "true") {
+            el.dataset.sidebarCollapsed = "true";
+          }
+          var accent = localStorage.getItem("apex-accent");
+          if (accent) el.dataset.accent = accent;
+          var radius = localStorage.getItem("apex-radius");
+          if (radius) el.style.setProperty("--radius", radius);
+          var dir = localStorage.getItem("apex-dir");
+          if (dir) el.dir = dir;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
+    <!-- Lo shell del template (<div class="flex min-h-screen bg-background">
+         con sidebar + header + <main>) vive in src/layouts/MainLayout.tsx:
+         qui resta solo il mount point di React. -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

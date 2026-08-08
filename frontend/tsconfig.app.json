@@ -15,6 +15,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path alias: "@/..." → "src/..." (deve combaciare con resolve.alias in
+       vite.config.ts). Niente baseUrl: da TS 4.1 i paths si risolvono relativi
+       a questo tsconfig, e baseUrl è deprecato in TS 6+. */
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

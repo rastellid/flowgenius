@@ -1,111 +1,462 @@
+/* Design system portato da apex-dashboard/src/styles/main.css.
+   Differenze rispetto all'originale: sono state omesse le regole specifiche
+   dei web component vanilla (`apex-sidebar { display: contents }` ecc.), la
+   sidebar della sezione docs e `.apex-code` (richiede sugar-high). I nomi
+   delle classi restano invariati, così il markup delle pagine del template
+   si può copiare in JSX senza riscriverlo. */
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-in-up: slide-in-up 0.35s ease-out;
+  --animate-scale-in: scale-in 0.2s ease-out;
+}
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --radius: 0.625rem;
+  /* Geist self-hosted via @fontsource-variable, con fallback di sistema. */
+  --font-geist-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-geist-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular,
+    "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --background: oklch(0.985 0.002 230);
+  --foreground: oklch(0.155 0.015 230);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.155 0.015 230);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.155 0.015 230);
+  --primary: oklch(0.55 0.175 160);
+  --primary-foreground: oklch(0.985 0.002 230);
+  --secondary: oklch(0.96 0.005 230);
+  --secondary-foreground: oklch(0.205 0.015 230);
+  --muted: oklch(0.96 0.005 230);
+  --muted-foreground: oklch(0.556 0.015 230);
+  --accent: oklch(0.96 0.005 230);
+  --accent-foreground: oklch(0.205 0.015 230);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0.002 230);
+  --success: oklch(0.62 0.17 145);
+  --success-foreground: oklch(0.985 0.002 230);
+  --warning: oklch(0.75 0.175 75);
+  --warning-foreground: oklch(0.205 0.015 230);
+  --border: oklch(0.922 0.005 230);
+  --input: oklch(0.922 0.005 230);
+  --ring: oklch(0.55 0.175 160);
+  --chart-1: oklch(0.55 0.175 160);
+  --chart-2: oklch(0.58 0.14 195);
+  --chart-3: oklch(0.60 0.16 250);
+  --chart-4: oklch(0.70 0.15 75);
+  --chart-5: oklch(0.60 0.16 320);
+  --sidebar: oklch(0.14 0 0);
+  --sidebar-foreground: oklch(0.87 0.005 230);
+  --sidebar-accent: oklch(0.20 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0.005 230);
+  --sidebar-border: oklch(0.22 0 0);
+  --sidebar-ring: oklch(0.55 0.175 160);
+  --sidebar-primary: oklch(0.60 0.175 160);
+  --sidebar-primary-foreground: oklch(0.985 0.002 230);
+}
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.dark {
+  --background: oklch(0.075 0 0);
+  --foreground: oklch(0.922 0.005 230);
+  --card: oklch(0.19 0 0);
+  --card-foreground: oklch(0.922 0.005 230);
+  --popover: oklch(0.21 0 0);
+  --popover-foreground: oklch(0.922 0.005 230);
+  --primary: oklch(0.65 0.19 160);
+  --primary-foreground: oklch(0.075 0 0);
+  --secondary: oklch(0.235 0 0);
+  --secondary-foreground: oklch(0.922 0.005 230);
+  --muted: oklch(0.235 0 0);
+  --muted-foreground: oklch(0.556 0.015 230);
+  --accent: oklch(0.235 0 0);
+  --accent-foreground: oklch(0.922 0.005 230);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.922 0.005 230);
+  --success: oklch(0.62 0.17 145);
+  --success-foreground: oklch(0.075 0 0);
+  --warning: oklch(0.75 0.175 75);
+  --warning-foreground: oklch(0.075 0 0);
+  --border: oklch(0.28 0 0);
+  --input: oklch(0.28 0 0);
+  --ring: oklch(0.65 0.19 160);
+  --chart-1: oklch(0.65 0.19 160);
+  --chart-2: oklch(0.58 0.14 195);
+  --chart-3: oklch(0.62 0.16 250);
+  --chart-4: oklch(0.70 0.15 75);
+  --chart-5: oklch(0.60 0.16 320);
+  --sidebar: oklch(0.11 0 0);
+  --sidebar-foreground: oklch(0.9 0.005 230);
+  --sidebar-accent: oklch(0.2 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0.005 230);
+  --sidebar-border: oklch(0.26 0 0);
+  --sidebar-ring: oklch(0.65 0.19 160);
+  --sidebar-primary: oklch(0.65 0.19 160);
+  --sidebar-primary-foreground: oklch(0.075 0 0);
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slide-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+/* ------------------------------------------------------------------ */
+/*  Primitive UI riusabili (porting delle varianti shadcn del template) */
+/*  Usare queste classi invece di ripetere stringhe di utility lunghe.  */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .apex-card {
+    @apply rounded-xl border bg-card text-card-foreground shadow-sm;
   }
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+  .apex-btn {
+    @apply inline-flex h-9 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .apex-btn-lg {
+    @apply h-10 px-6;
+  }
+  .apex-btn-sm {
+    @apply h-8 gap-1.5 px-3;
+  }
+  .apex-btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+  .apex-btn-outline {
+    @apply border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50;
+  }
+  .apex-btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  .apex-btn-ghost {
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+  .apex-btn-destructive {
+    @apply bg-destructive text-white hover:bg-destructive/90;
+  }
+
+  .apex-input {
+    @apply h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30;
+  }
+  .apex-label {
+    @apply flex items-center gap-2 text-sm font-medium leading-none select-none;
+  }
+  .apex-checkbox {
+    @apply size-4 shrink-0 rounded-[4px];
+    accent-color: var(--primary);
+  }
+  .apex-separator {
+    @apply h-px w-full shrink-0 bg-border;
+  }
+  .apex-select {
+    @apply h-9 w-full appearance-none rounded-md border border-input bg-transparent px-3 py-1 pe-9 text-sm shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30;
+  }
+  .apex-textarea {
+    @apply min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30;
+  }
+  .apex-field-error {
+    @apply text-xs font-medium text-destructive;
+  }
+  /* Tabs (la lista è: inline-flex gap-1 rounded-lg bg-muted p-1) */
+  .apex-tab {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-all hover:text-foreground;
+  }
+  .apex-tab-active {
+    @apply bg-background text-foreground shadow-sm hover:text-foreground;
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
+/* Switch toggle (checkbox stilizzata) */
+.apex-switch {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  height: 1.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 9999px;
+  background: var(--input);
+  transition: background 0.2s ease;
+}
+.apex-switch:checked {
+  background: var(--primary);
+}
+.apex-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.2);
+  transition: transform 0.2s ease;
+}
+.apex-switch:checked::after {
+  transform: translateX(1rem);
+}
+.apex-switch:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* <dialog> nativo usato per le modali di conferma */
+.apex-dialog {
+  /* margin:auto ripristina la centratura nativa (il preflight Tailwind la resetta) */
+  margin: auto;
+  width: calc(100% - 2rem);
+  max-width: 28rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  padding: 0;
+  box-shadow: 0 25px 50px -12px oklch(0 0 0 / 0.45);
+}
+.apex-dialog::backdrop {
+  background: oklch(0 0 0 / 0.5);
+}
+.apex-dialog[open] {
+  animation: scale-in 0.15s ease-out;
+}
+
+/* Griglia decorativa + testo in gradiente (pagine di errore / utility).
+   Sostituiscono immagini di sfondo: sono solo CSS. */
+.apex-page-grid {
+  background-image: radial-gradient(circle, oklch(0.55 0.175 160 / 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+}
+.apex-gradient-text {
+  background: linear-gradient(135deg, oklch(0.55 0.175 160), oklch(0.58 0.14 195), oklch(0.60 0.16 250));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Offset del layout sidebar — unica fonte di verità.                  */
+/*  Larghezza sidebar e margine del contenuto leggono questa variabile,  */
+/*  così il collasso cambia un solo attributo su <html>.                 */
+/* ------------------------------------------------------------------ */
+:root {
+  --sidebar-width: 260px;
+}
+html[data-sidebar-collapsed="true"] {
+  --sidebar-width: 68px;
+}
+
+/* Un solo elemento: drawer a scomparsa su mobile, rail fissa e collassabile
+   su desktop. */
+.apex-sidebar-aside {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 50;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
+  width: 260px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+[dir="rtl"] .apex-sidebar-aside {
+  transform: translateX(100%);
+}
+html[data-mobile-open="true"] .apex-sidebar-aside {
+  transform: translateX(0);
+}
+.apex-sidebar-overlay {
+  display: none;
+}
+html[data-mobile-open="true"] .apex-sidebar-overlay {
+  display: block;
 }
 
-body {
-  margin: 0;
+/* Default dichiarati PRIMA della media query, così gli override desktop
+   vincono (le media query non aggiungono specificità: conta l'ordine). */
+.apex-collapse-btn {
+  display: none;
+}
+.sidebar-badge-dot {
+  display: none;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
+@media (min-width: 1024px) {
+  .apex-sidebar-aside {
+    transform: none;
+    width: var(--sidebar-width);
+  }
+  [dir="rtl"] .apex-sidebar-aside {
+    transform: none;
+  }
+  .apex-sidebar-overlay {
+    display: none !important;
+  }
+  .apex-content {
+    margin-inline-start: var(--sidebar-width);
+    transition: margin 0.3s ease-in-out;
+  }
+  /* Il bottone di collasso ha senso solo su desktop. */
+  .apex-collapse-btn {
+    display: flex;
+  }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+  /* Rifiniture della rail collassata (su mobile il drawer è sempre pieno). */
+  html[data-sidebar-collapsed="true"] .sidebar-label,
+  html[data-sidebar-collapsed="true"] .sidebar-group-label,
+  html[data-sidebar-collapsed="true"] .sidebar-brand-text,
+  html[data-sidebar-collapsed="true"] .sidebar-user-info,
+  html[data-sidebar-collapsed="true"] .sidebar-logout,
+  html[data-sidebar-collapsed="true"] .sidebar-badge {
+    display: none;
+  }
+  html[data-sidebar-collapsed="true"] .sidebar-nav-item {
+    justify-content: center;
+  }
+  html[data-sidebar-collapsed="true"] .sidebar-badge-dot {
+    display: block;
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+
+/* Scrollbar sottile */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
-p {
-  margin: 0;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.45 0 0 / 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.45 0 0 / 0.45);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+/* Scrollbar visibile solo su hover/focus (usata dalla nav della sidebar) */
+.scrollbar-fade {
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+.scrollbar-fade:hover,
+.scrollbar-fade:focus-within {
+  scrollbar-color: oklch(0.45 0 0 / 0.35) transparent;
+}
+.scrollbar-fade::-webkit-scrollbar-thumb {
+  background: transparent;
+  transition: background 0.2s ease;
+}
+.scrollbar-fade:hover::-webkit-scrollbar-thumb,
+.scrollbar-fade:focus-within::-webkit-scrollbar-thumb {
+  background: oklch(0.45 0 0 / 0.3);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Animazione dei gruppi di nav collassabili */
+.nav-group-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
+.nav-group-body[hidden] {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+.nav-group-body > div {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Preset di accento del theme customizer.                             */
+/*  Ogni preset sposta solo la tonalità (riusando L/C del teal base),   */
+/*  così l'intera UI e chart-1 si ricolorano. Definiti dopo :root/.dark */
+/*  per vincere; le varianti .dark[...] sovrascrivono la palette scura. */
+/* ------------------------------------------------------------------ */
+[data-accent="blue"]   { --primary: oklch(0.55 0.175 255); --ring: oklch(0.55 0.175 255); --sidebar-primary: oklch(0.60 0.175 255); --chart-1: oklch(0.55 0.175 255); }
+.dark[data-accent="blue"]   { --primary: oklch(0.65 0.19 255); --ring: oklch(0.65 0.19 255); --sidebar-primary: oklch(0.65 0.19 255); --chart-1: oklch(0.65 0.19 255); }
+
+[data-accent="violet"] { --primary: oklch(0.55 0.20 300); --ring: oklch(0.55 0.20 300); --sidebar-primary: oklch(0.60 0.20 300); --chart-1: oklch(0.55 0.20 300); }
+.dark[data-accent="violet"] { --primary: oklch(0.66 0.21 300); --ring: oklch(0.66 0.21 300); --sidebar-primary: oklch(0.66 0.21 300); --chart-1: oklch(0.66 0.21 300); }
+
+[data-accent="rose"]   { --primary: oklch(0.58 0.22 15); --ring: oklch(0.58 0.22 15); --sidebar-primary: oklch(0.62 0.22 15); --chart-1: oklch(0.58 0.22 15); }
+.dark[data-accent="rose"]   { --primary: oklch(0.65 0.23 15); --ring: oklch(0.65 0.23 15); --sidebar-primary: oklch(0.65 0.23 15); --chart-1: oklch(0.65 0.23 15); }
+
+[data-accent="green"]  { --primary: oklch(0.60 0.17 150); --ring: oklch(0.60 0.17 150); --sidebar-primary: oklch(0.62 0.17 150); --chart-1: oklch(0.60 0.17 150); }
+.dark[data-accent="green"]  { --primary: oklch(0.68 0.18 150); --ring: oklch(0.68 0.18 150); --sidebar-primary: oklch(0.68 0.18 150); --chart-1: oklch(0.68 0.18 150); }
+
+/* L'ambra è chiara: serve testo scuro sulle superfici primary. */
+[data-accent="amber"]  { --primary: oklch(0.78 0.15 80); --primary-foreground: oklch(0.205 0.015 230); --ring: oklch(0.78 0.15 80); --sidebar-primary: oklch(0.80 0.15 80); --sidebar-primary-foreground: oklch(0.205 0.015 230); --chart-1: oklch(0.78 0.15 80); }
+.dark[data-accent="amber"]  { --primary: oklch(0.82 0.15 80); --primary-foreground: oklch(0.075 0 0); --ring: oklch(0.82 0.15 80); --sidebar-primary: oklch(0.82 0.15 80); --sidebar-primary-foreground: oklch(0.075 0 0); --chart-1: oklch(0.82 0.15 80); }
