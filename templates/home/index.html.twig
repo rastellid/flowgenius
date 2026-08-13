@@ -1,0 +1,12 @@
+{# templates/home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <h1>Benvenuto{% if user.name %} {{ user.name }} {{ user.surname }}{% endif %}!</h1>
+
+    <p>Hai effettuato l'accesso come {{ app.user.userIdentifier }}.</p>
+
+    <a href="{{ path('app_logout') }}">Logout</a>
+{% endblock %}

@@ -9,11 +9,16 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-            Scouting:
+            Assessment:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Assessment/Domain'
                 prefix: 'App\Assessment\Domain'
                 alias: Assessment
+            Infrastructure:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Shared'
+                prefix: 'App\Shared'
+                alias: Shared
 
 when@test:
     doctrine:

@@ -5,9 +5,15 @@ assessment_controllers:
         path: ../src/Assessment/UI/REST/Controller/
         namespace: App\Assessment\UI\REST\Controller
 
-shared_controllers:
+rest_shared_controllers:
     type: attribute
     prefix: /v1/
     resource:
         path: ../src/Shared/UI/REST/Controller/
         namespace: App\Shared\UI\REST\Controller
+
+web_shared_controllers:
+    type: attribute
+    resource:
+        path: ../src/Shared/UI/WEB/Controller/
+        namespace: App\Shared\UI\WEB\Controller
