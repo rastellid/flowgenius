@@ -19,53 +19,10 @@ const navGroups: NavGroupData[] = [
     items: [
       { icon: 'layout-dashboard', label: 'Dashboard', to: '/' },
       { icon: 'clipboard-check', label: 'Assessment', to: '/assessment' },
-      { icon: 'bar-chart-3', label: 'Analytics', to: '/analytics' },
-      { icon: 'store', label: 'eCommerce', to: '/ecommerce' },
-      { icon: 'handshake', label: 'CRM', to: '/crm' },
-      { icon: 'rocket', label: 'SaaS', to: '/saas' },
-      { icon: 'chart-no-axes-combined', label: 'Charts', to: '/charts' },
     ],
-  },
-  {
-    label: 'Commerce',
-    items: [
-      { icon: 'shopping-cart', label: 'Orders', to: '/orders', badge: '12' },
-      { icon: 'package', label: 'Products', to: '/products' },
-      { icon: 'users', label: 'Customers', to: '/customers' },
-      { icon: 'file-text', label: 'Invoices', to: '/invoices' },
-    ],
-  },
-  {
-    label: 'Apps',
-    items: [
-      { icon: 'mail', label: 'Mail', to: '/mail' },
-      { icon: 'message-circle', label: 'Chat', to: '/chat' },
-      { icon: 'folder-open', label: 'Files', to: '/files' },
-      { icon: 'kanban', label: 'Kanban', to: '/kanban' },
-      { icon: 'calendar', label: 'Calendar', to: '/calendar' },
-      { icon: 'list-checks', label: 'Wizard', to: '/wizard' },
-      { icon: 'file-input', label: 'Forms', to: '/forms' },
-    ],
-  },
-  {
-    label: 'Finance',
-    items: [{ icon: 'credit-card', label: 'Billing', to: '/billing' }],
   },
 ]
 
-const systemNav: NavGroupData = {
-  label: 'System',
-  items: [
-    { icon: 'user-cog', label: 'Users', to: '/users' },
-    { icon: 'bell', label: 'Notifications', to: '/notifications', badge: '3' },
-    { icon: 'settings', label: 'Settings', to: '/settings' },
-    { icon: 'help-circle', label: 'Help & Support', to: '/support' },
-  ],
-}
-
-const docsNav: NavItemData = { icon: 'book-open', label: 'Documentation', to: '/docs' }
-
-const COLLAPSE_KEY = 'apex-sidebar-collapsed'
 
 /** Chiude il drawer mobile (usato da overlay, X e tap su un link). */
 function closeMobile() {
@@ -142,17 +99,6 @@ function NavGroup({ group }: { group: NavGroupData }) {
 }
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(
-    () => document.documentElement.dataset.sidebarCollapsed === 'true',
-  )
-
-  const toggleCollapse = () => {
-    const next = !collapsed
-    document.documentElement.dataset.sidebarCollapsed = String(next)
-    localStorage.setItem(COLLAPSE_KEY, String(next))
-    setCollapsed(next)
-  }
-
   return (
     <>
       <div
@@ -184,10 +130,6 @@ export default function Sidebar() {
           {navGroups.map((g) => (
             <NavGroup key={g.label} group={g} />
           ))}
-          <div className="my-2 border-t border-sidebar-border" />
-          <NavGroup group={systemNav} />
-          <div className="my-2 border-t border-sidebar-border" />
-          <NavItem item={docsNav} />
         </nav>
 
         {/* User */}
@@ -216,18 +158,6 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Collapse toggle (desktop) */}
-        <button
-          type="button"
-          onClick={toggleCollapse}
-          aria-label="Toggle sidebar"
-          className="apex-collapse-btn absolute -right-3 top-20 h-6 w-6 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-md transition-all hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Icon
-            name="chevron-left"
-            className={`apex-collapse-icon h-3.5 w-3.5 mx-auto transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`}
-          />
-        </button>
       </aside>
     </>
   )
