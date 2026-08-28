@@ -1,23 +1,58 @@
 {# templates/login/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{# ... #}
+{% block title %}Sign In · Imprenditore Smart{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/css/login.css">
+{% endblock %}
 
 {% block body %}
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <div class="page">
+      <div class="auth-wrap">
+        <a href="#" class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </span>
+          <span class="brand-name">Imprenditore Smart</span>
+        </a>
 
-    <form action="{{ path('app_login') }}" method="post">
-        <label for="username">Email:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" required>
+        <div class="card">
+          <div class="card-header">
+            <h1 class="card-title">Welcome back</h1>
+            <p class="card-subtitle">Sign in to your account</p>
+          </div>
+          <div class="card-body">
+            {% if error %}
+              <div class="alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password" required>
-
-        {# If you want to control the URL the user is redirected to on success
-        <input type="hidden" name="_target_path" value="/account"> #}
-
-        <button type="submit">login</button>
-    </form>
+            <form class="form" action="{{ path('app_login') }}" method="post">
+              <div class="field">
+                <label for="email" class="label">Email</label>
+                <input id="email" type="email" name="_username" value="{{ last_username }}"
+                       placeholder="name@example.com" required autofocus class="input" />
+              </div>
+              <div class="field">
+                <label for="password" class="label">Password</label>
+                <input id="password" type="password" name="_password"
+                       placeholder="Enter your password" required class="input" />
+              </div>
+{#              <div class="row">#}
+{#                <div class="remember">#}
+{#                  <input id="remember" type="checkbox" name="_remember_me" class="checkbox" />#}
+{#                  <label for="remember" class="label label-normal">Remember me</label>#}
+{#                </div>#}
+{#                <a href="#" class="link">Forgot password?</a>#}
+{#              </div>#}
+              <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}
