@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\UI\WEB\Controller;
 
+use App\Shared\Infrastructure\Symfony\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

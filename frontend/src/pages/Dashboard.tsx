@@ -1,12 +1,15 @@
-// Segnaposto in stile Apex. I widget della dashboard (StatsCards, RevenueChart,
-// OrdersTable, ecc.) verranno portati nella fase successiva con react-apexcharts.
-export default function HomePage() {
+import { useRequiredCurrentUser } from '@/lib/currentUser'
+
+export default function Dashboard() {
+  // /home è protetta dal firewall: qui l'utente è garantito (tipo non-null).
+  const user = useRequiredCurrentUser()
+
   return (
     <>
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Welcome back — here's what's happening with your store today.
+          {`Bentornato, ${user.name} ${user.surname}`}
         </p>
       </div>
 

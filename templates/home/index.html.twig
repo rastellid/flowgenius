@@ -33,4 +33,18 @@
 {% block body %}
     {# React monta qui: src/main.tsx fa createRoot(document.getElementById('root')). #}
     <div id="root"></div>
+
+    {# Bootstrap data: i dati dell'utente loggato, serializzati in JSON e letti
+       una volta da React all'avvio (nessun giro di rete). Esponiamo SOLO i campi
+       voluti (mai la password). I flag JSON_HEX_* rendono il JSON sicuro dentro
+       <script> e in contesto HTML (niente XSS / rotture di tag). #}
+    <script type="application/json" id="app-current-user">
+        {{- {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            roles: user.roles,
+        }|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw -}}
+    </script>
 {% endblock %}
