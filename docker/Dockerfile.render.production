@@ -1,0 +1,175 @@
+# syntax=docker/dockerfile:1
+#
+# Production image for Render.com.
+#
+# Differences from docker/Dockerfile (the dev image):
+#   - Multi-stage: the React app in frontend/ is compiled with `npm run build`
+#     (Vite --mode production) in a Node stage, then only the built assets
+#     (public/build) are carried into the final PHP image.
+#   - No bind-mount at runtime (Render runs the image as-is), so vendor/ and the
+#     compiled frontend are baked into the image.
+#   - nginx listens on Render's $PORT (injected at runtime), not a fixed :80.
+#   - Symfony runs in prod: APP_ENV=prod, optimized autoloader, opcache on.
+#   - Database migrations run via render.yaml's preDeployCommand (not at start).
+#
+# Build context MUST be the repo root (COPY . and COPY frontend/ need it).
+# On Render: Dockerfile Path = docker/Dockerfile.render.production, Docker Context = .
+
+
+############################################################
+# Stage 1 — build the React/Vite frontend (production mode)
+############################################################
+FROM node:24.16.0-bookworm-slim AS frontend
+
+WORKDIR /app/frontend
+
+# Install deps first (cached until the lockfile changes).
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+# Copy the rest of the frontend sources (node_modules is excluded via .dockerignore).
+COPY frontend/ ./
+
+# `npm run build` = `tsc -b && vite build --mode production`.
+# vite.config.ts has outDir "../public/build", so the output lands in /app/public/build.
+RUN npm run build
+
+
+############################################################
+# Stage 2 — PHP runtime (php-fpm + nginx in one container)
+############################################################
+FROM php:8.5.7-fpm AS app
+
+# System dependencies (libpq for PostgreSQL) and tools to add the nginx repo.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gnupg \
+        libpq-dev \
+        libzip-dev \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Official nginx repository (for nginx 1.30).
+RUN curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor -o /usr/share/keyrings/nginx.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/nginx.gpg] https://nginx.org/packages/debian $(. /etc/os-release && echo $VERSION_CODENAME) nginx" \
+        > /etc/apt/sources.list.d/nginx.list
+
+# Install nginx 1.30 from the official repository.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nginx=1.30.* \
+    && rm -rf /var/lib/apt/lists/*
+
+# PHP extensions (PostgreSQL + zip). OPcache is already built into the base image
+# (see `php -v`: "with Zend OPcache"), so it only needs the ini tuning below.
+RUN docker-php-ext-install pdo_pgsql pgsql zip
+
+# Production PHP settings (OPcache + hardened defaults).
+RUN { \
+      echo 'opcache.enable=1'; \
+      echo 'opcache.enable_cli=0'; \
+      echo 'opcache.memory_consumption=192'; \
+      echo 'opcache.interned_strings_buffer=16'; \
+      echo 'opcache.max_accelerated_files=20000'; \
+      echo 'opcache.validate_timestamps=0'; \
+      echo 'realpath_cache_size=4096K'; \
+      echo 'realpath_cache_ttl=600'; \
+      echo 'expose_php=0'; \
+      echo 'memory_limit=256M'; \
+    } > /usr/local/etc/php/conf.d/zz-production.ini
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Symfony runs in production.
+ENV APP_ENV=prod \
+    APP_DEBUG=0
+
+WORKDIR /var/www/flowgenius
+
+# Copy composer manifests first so `composer install` is cached across source changes.
+COPY composer.json composer.lock symfony.lock ./
+
+# Copy the whole project (docker/, vendor/, var/, frontend/node_modules are handled by .dockerignore).
+COPY . /var/www/flowgenius
+
+# Bring in the production-built frontend from stage 1 (overrides any local public/build).
+COPY --from=frontend /app/public/build /var/www/flowgenius/public/build
+
+# Install PHP deps for production. The auto-scripts (cache:clear + assets:install)
+# run here in prod mode; they use the .env DATABASE_URL default (no DB connection needed).
+RUN composer install \
+        --no-dev \
+        --no-interaction \
+        --prefer-dist \
+        --optimize-autoloader \
+        --classmap-authoritative \
+    && composer clear-cache
+
+# nginx vhost TEMPLATE: __PORT__ is replaced at container start with Render's $PORT.
+# Based on docker/nginx.conf but logs to stdout/stderr and adds long-cache for /build.
+RUN mkdir -p /etc/nginx/templates && cat > /etc/nginx/templates/default.conf.template <<'NGINX'
+server {
+    listen __PORT__;
+    server_name _;
+    root /var/www/flowgenius/public;
+
+    # Compiled frontend assets: hashed filenames, safe to cache forever.
+    location /build/ {
+        access_log off;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    # Pass the PHP scripts to php-fpm running in the same container.
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        internal;
+    }
+
+    # Return 404 for all other .php files (no direct access).
+    location ~ \.php$ {
+        return 404;
+    }
+
+    error_log /dev/stderr warn;
+    access_log /dev/stdout;
+}
+NGINX
+
+# Startup script: render the nginx port, run migrations, start php-fpm + nginx.
+RUN cat > /usr/local/bin/render-entrypoint.sh <<'SH'
+#!/bin/sh
+set -e
+
+# Render injects $PORT; fall back to 80 for local runs of this image.
+: "${PORT:=80}"
+echo "[entrypoint] nginx will listen on port ${PORT}"
+sed "s/__PORT__/${PORT}/g" /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+
+# NB: le migrazioni NON girano qui — sono nel preDeployCommand di render.yaml
+# (una volta per deploy, non a ogni avvio di istanza). Se avvii questa immagine
+# senza render.yaml, lancia le migrazioni a mano:
+#   docker ... php bin/console doctrine:migrations:migrate --no-interaction
+
+echo "[entrypoint] starting php-fpm + nginx"
+php-fpm -D
+exec nginx -g 'daemon off;'
+SH
+RUN chmod +x /usr/local/bin/render-entrypoint.sh
+
+# Render provides the real port via $PORT; documented here for local runs.
+EXPOSE 80
+
+CMD ["/usr/local/bin/render-entrypoint.sh"]

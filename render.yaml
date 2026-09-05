@@ -1,0 +1,12 @@
+# render.yaml — SOLO il comando pre-deploy.
+# Database, variabili d'ambiente, Dockerfile, piano, ecc. sono già configurati
+# sul portale web di Render: qui NON vanno ripetuti.
+#
+# Nota: lo schema del Blueprint richiede che 'preDeployCommand' stia dentro un
+# servizio, quindi servono comunque 'type', 'name' e 'runtime'.
+# 'name' deve combaciare ESATTAMENTE col nome del servizio sul portale.
+services:
+  - type: web
+    name: flowgenius            # <-- il nome ESATTO del tuo web service su Render
+    runtime: docker
+    preDeployCommand: "php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
