@@ -83,10 +83,6 @@ RUN { \
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Symfony runs in production.
-ENV APP_ENV=prod \
-    APP_DEBUG=0
-
 WORKDIR /var/www/flowgenius
 
 # Copy composer manifests first so `composer install` is cached across source changes.

@@ -23,7 +23,7 @@ services:
     container_name: flowgenius_db
     image: postgres:18
     environment:
-      POSTGRES_DB: app
+      POSTGRES_DB: flowgenius_db
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
     ports:
@@ -32,7 +32,7 @@ services:
       # PostgreSQL 18+ stores data in a version-specific subdir; mount the parent dir
       - db_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      test: ["CMD-SHELL", "pg_isready -U app -d flowgenius_db"]
       interval: 5s
       timeout: 5s
       retries: 10
