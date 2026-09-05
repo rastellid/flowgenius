@@ -151,6 +151,9 @@ export default function Sidebar() {
             <button
               type="button"
               aria-label="Log out"
+              // Logout gestito da Symfony (rotta /logout, fuori dalla SPA):
+              // navigazione full-page, non React Router.
+              onClick={() => { window.location.href = '/logout' }}
               className="sidebar-logout rounded-md p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground/70"
             >
               <Icon name="log-out" className="h-4 w-4" />

@@ -74,9 +74,12 @@ export default function Header() {
                   <Icon name="bell" className="me-2 h-4 w-4" /> Notifications
                 </Link>
                 <div className="my-1 h-px bg-border" />
-                <Link to="/login" className="flex items-center rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent">
+                {/* Logout gestito da Symfony (/logout, fuori dalla SPA): anchor
+                    normale = navigazione full-page, NON React Router. Path relativo
+                    così resta valido a prescindere da host/porta. */}
+                <a href="/logout" className="flex items-center rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent">
                   <Icon name="log-out" className="me-2 h-4 w-4" /> Log out
-                </Link>
+                </a>
               </div>
             )}
           </div>

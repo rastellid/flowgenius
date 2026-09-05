@@ -1,12 +1,36 @@
-{# templates/home/index.html.twig #}
+{# templates/home/index.html.twig
+   Mount point della SPA React (frontend/, entry 'main' = src/main.tsx).
+   Servito su /home dopo il login. È l'UNICO template che carica React:
+   base resta neutro e il login su / rimane Twig SSR. #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Imprenditore Smart{% endblock %}
+
+{% block stylesheets %}
+    {# CSS dell'entry 'main'. In dev iniettato via JS dal dev server; in prod <link> hashato. #}
+    {{ vite_entry_link_tags('main') }}
+{% endblock %}
+
+{% block javascripts %}
+    {% if vite_mode() == 'dev' %}
+        {# Preamble di react-refresh: in dev @vitejs/plugin-react lo pretende
+           (ogni componente controlla window.$RefreshReg$ e altrimenti lancia
+           "can't detect preamble" → pagina bianca). Vite lo inietta nel suo
+           index.html, ma qui l'HTML lo serve Twig, quindi lo mettiamo noi PRIMA
+           dell'entry. Solo in dev; in prod questo blocco non viene emesso. #}
+        <script type="module">
+            import RefreshRuntime from 'http://localhost:5173/build/@react-refresh'
+            RefreshRuntime.injectIntoGlobalHook(window)
+            window.$RefreshReg$ = () => {}
+            window.$RefreshSig$ = () => (type) => type
+            window.__vite_plugin_react_preamble_installed__ = true
+        </script>
+    {% endif %}
+    {# <script type="module"> dell'entry 'main'. In dev -> http://localhost:5173, in prod -> public/build. #}
+    {{ vite_entry_script_tags('main') }}
+{% endblock %}
 
 {% block body %}
-    <h1>Benvenuto{% if user.name %} {{ user.name }} {{ user.surname }}{% endif %}!</h1>
-
-    <p>Hai effettuato l'accesso come {{ app.user.userIdentifier }}.</p>
-
-    <a href="{{ path('app_logout') }}">Logout</a>
+    {# React monta qui: src/main.tsx fa createRoot(document.getElementById('root')). #}
+    <div id="root"></div>
 {% endblock %}

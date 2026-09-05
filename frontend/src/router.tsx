@@ -4,16 +4,24 @@ import HomePage from '@/pages/HomePage'
 import AssessmentPage from '@/pages/AssessmentPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      // MainLayout is the shared shell; child routes render inside its <Outlet />
+      element: <MainLayout />,
+      children: [
+        { path: '/', element: <HomePage /> },
+        { path: '/assessment', element: <AssessmentPage /> },
+        // Catch-all dentro il layout: le voci di Sidebar non ancora implementate
+        // mostrano il 404 mantenendo shell e navigazione.
+        { path: '*', element: <NotFoundPage /> },
+      ],
+    },
+  ],
   {
-    // MainLayout is the shared shell; child routes render inside its <Outlet />
-    element: <MainLayout />,
-    children: [
-      { path: '/', element: <HomePage /> },
-      { path: '/assessment', element: <AssessmentPage /> },
-      // Catch-all dentro il layout: le voci di Sidebar non ancora implementate
-      // mostrano il 404 mantenendo shell e navigazione.
-      { path: '*', element: <NotFoundPage /> },
-    ],
+    // La SPA è montata da Symfony su /home (vedi HomeController). Il basename fa
+    // sì che le rotte qui sopra vivano su /home, /home/assessment, ecc.
+    // I <Link>/<NavLink> lo applicano automaticamente.
+    basename: '/home',
   },
-])
+)
