@@ -108,6 +108,12 @@ RUN composer install \
         --classmap-authoritative \
     && composer clear-cache
 
+# php-fpm runs as www-data, but the source was copied as root. Make var/ (cache +
+# logs) owned/writable by www-data, otherwise Symfony can't create var/cache/<env>
+# at runtime -> "Unable to create the cache directory".
+RUN mkdir -p var/cache var/log \
+    && chown -R www-data:www-data var
+
 # nginx vhost TEMPLATE: __PORT__ is replaced at container start with Render's $PORT.
 # Based on docker/nginx.conf but logs to stdout/stderr and adds long-cache for /build.
 RUN mkdir -p /etc/nginx/templates && cat > /etc/nginx/templates/default.conf.template <<'NGINX'
