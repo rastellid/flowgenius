@@ -9,4 +9,6 @@ services:
   - type: web
     name: flowgenius            # <-- il nome ESATTO del tuo web service su Render
     runtime: docker
+    dockerfilePath: ./docker/render/production.Dockerfile
+    dockerContext: .
     preDeployCommand: "php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"

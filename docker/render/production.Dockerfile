@@ -13,7 +13,7 @@
 #   - Database migrations run via render.yaml's preDeployCommand (not at start).
 #
 # Build context MUST be the repo root (COPY . and COPY frontend/ need it).
-# On Render: Dockerfile Path = docker/Dockerfile.render.production, Docker Context = .
+# On Render: Dockerfile Path = docker/render/production.Dockerfile, Docker Context = .
 
 
 ############################################################
@@ -82,6 +82,12 @@ RUN { \
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Symfony runs in production. Must be set BEFORE `composer install`: its auto-scripts
+# (cache:clear) boot the kernel, and in 'dev' they'd try to load dev-only bundles
+# (WebProfiler, Maker) that --no-dev doesn't install -> "class not found" -> exit 255.
+ENV APP_ENV=prod \
+    APP_DEBUG=0
 
 WORKDIR /var/www/flowgenius
 
