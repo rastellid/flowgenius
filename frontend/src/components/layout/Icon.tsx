@@ -3,7 +3,7 @@
 // pop-in asincrono per la chrome sempre visibile (sidebar/header), e
 // tree-shaking pulito. Aggiungi qui le icone nuove man mano che servono.
 import {
-  Zap, X, ChevronRight, ChevronLeft, LogOut,
+  Zap, X, ChevronRight, ChevronLeft, ChevronDown, LogOut,
   LayoutDashboard, BarChart3, Store, Handshake, Rocket, ChartNoAxesCombined,
   ShoppingCart, Package, Users, FileText,
   Mail, MessageCircle, FolderOpen, Kanban, Calendar, ListChecks, FileInput,
@@ -17,6 +17,7 @@ const ICONS = {
   'x': X,
   'chevron-right': ChevronRight,
   'chevron-left': ChevronLeft,
+  'chevron-down': ChevronDown,
   'log-out': LogOut,
   'layout-dashboard': LayoutDashboard,
   'bar-chart-3': BarChart3,
